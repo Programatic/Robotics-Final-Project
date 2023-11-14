@@ -1,3 +1,6 @@
+"""
+This file contains the Node class, which is used to represent a node in the grid.
+"""
 class Node:
     def __init__(self, x, y, parent_x, parent_y, start_distance, goal_distance, diagonal_neighbors=False):
         """
@@ -7,7 +10,7 @@ class Node:
         :param parent_y: the y coordinate of the parent node
         :param start_distance: the distance from the start node
         :param goal_distance: the distance from the goal node
-        :param diagonal_neighbors: whether or not diagonal neighbors are allowed
+        :param diagonal_neighbors: whether diagonal neighbors are allowed
         """
         self.x = x
         self.y = y
