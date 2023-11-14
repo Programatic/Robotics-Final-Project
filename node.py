@@ -2,12 +2,10 @@
 This file contains the Node class, which is used to represent a node in the grid.
 """
 
-from typing import Optional
-
 class Node:
     def __init__(self, x: int, y: int, parent_x: int, parent_y: int,
                  start_distance: float, goal_distance: float,
-                 diagonal_neighbors: Optional[bool] = False):
+                 diagonal_neighbors: bool = False):
         """
         :param x: the x coordinate of the node
         :param y: the y coordinate of the node
