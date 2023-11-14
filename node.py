@@ -1,8 +1,13 @@
 """
 This file contains the Node class, which is used to represent a node in the grid.
 """
+
+from typing import Optional
+
 class Node:
-    def __init__(self, x, y, parent_x, parent_y, start_distance, goal_distance, diagonal_neighbors=False):
+    def __init__(self, x: int, y: int, parent_x: int, parent_y: int,
+                 start_distance: float, goal_distance: float,
+                 diagonal_neighbors: Optional[bool] = False):
         """
         :param x: the x coordinate of the node
         :param y: the y coordinate of the node
@@ -20,12 +25,11 @@ class Node:
         self.goal_distance = goal_distance
         self.diagonal_neighbors = diagonal_neighbors
 
-
     def __str__(self):
         """
         return: a string representation of the node
         """
-        return "Node: (" + str(self.x) + ", " + str(self.y) + ")"
+        return f"Node: ({self.x}, {self.y})"
 
     def get_neighbors(self):
         """
