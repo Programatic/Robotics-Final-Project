@@ -1,0 +1,6 @@
+[tool.pylint.design]
+max-args = 10
+
+[tool.pylint.format]
+max-line-length = 120
+
