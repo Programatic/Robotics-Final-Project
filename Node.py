@@ -32,7 +32,8 @@ class Node:
         return: a list of the neighbors of the node
         """
         if self.diagonal_neighbors:
-            return [[x, y + 1], [x + 1, y], [x, y - 1], [x - 1, y], [x + 1, y + 1],
-                    [x + 1, y - 1], [x - 1, y + 1], [x - 1, y - 1]]
+            return [[self.x, self.y + 1], [self.x + 1, self.y], [self.x, self.y - 1], [self.x - 1, self.y],
+                    [self.x + 1, self.y + 1], [self.x + 1, self.y - 1], [self.x - 1, self.y + 1],
+                    [self.x - 1, self.y - 1]]
         else:
-            return [[x, y + 1], [x + 1, y], [x, y - 1], [x - 1, y]]
+            return [[self.x, self.y + 1], [self.x + 1, self.y], [self.x, self.y - 1], [self.x - 1, self.y]]
