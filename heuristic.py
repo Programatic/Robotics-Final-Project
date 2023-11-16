@@ -3,9 +3,10 @@ This script contains heuristic functions that is used for determining the best
 path to traverse in the maze.
 """
 import random
+from node import Position
 
 
-def manhattan_distance(node1: tuple[int, int], node2: tuple[int, int]) -> int:
+def manhattan_distance(node1: Position, node2: Position) -> int:
     """
     Calculates the Manhattan distance between two nodes.
 
