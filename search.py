@@ -1,14 +1,13 @@
 """
 This file contains the search algorithms that are used to find the path from the start node to the end node
 """
-
 from typing import Callable, Optional
 from node import Node, Position
 
 # (x, y) coordinates of the maze's start and end
-# TODO: Change this to the start coordinates of the maze
+# TO DO: Change this to the start coordinates of the maze
 start_coordinates: Position = (0, 0)
-# TODO: Change this to the end coordinates of the maze
+# TO DO: Change this to the end coordinates of the maze
 end_coordinates: Position = (100, 100)
 
 
@@ -104,8 +103,7 @@ def beam(heuristic: Callable[[Position, Position], int], k: int = 2,
     return []
 
 
-'''
-def brushfire(heuristic: Callable[[Position, Position]], int],
+def brushfire(heuristic: Callable[[Position, Position], int],
               diagonal_neighbors: bool = False, depth_limit: int = 50) -> list['Node']:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
@@ -113,9 +111,11 @@ def brushfire(heuristic: Callable[[Position, Position]], int],
     :param depth_limit: the depth limit of the search
     Returns: a list of nodes that represents the path from the start node to the end node
     """
-    # TODO: Implement this function
+    # TO DO: Implement this function
+    heuristic(start_coordinates, end_coordinates)
+    if diagonal_neighbors:
+        depth_limit = max(heuristic(start_coordinates, end_coordinates), depth_limit)
     return []
-'''
 
 
 def initialize_algorithm(heuristic: Callable[[Position, Position], int],
