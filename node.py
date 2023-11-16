@@ -1,7 +1,7 @@
 """
 This file contains the Node class, which is used to represent a node in the grid.
 """
-from typing import Callable, Any
+from typing import Callable, Any, Optional
 
 
 class Node:
@@ -21,7 +21,7 @@ class Node:
 
     def __init__(self, pos: tuple[int, int], destination: tuple[int, int],
                  heuristic_function: Callable[[tuple[int, int], tuple[int, int]], int],
-                 parent: object = None, start_distance: int = 0,
+                 parent: Optional['Node'] = None, start_distance: int = 0,
                  diagonal_neighbors: bool = False):
         """
         :param pos: the (x, y) coordinates of the node
@@ -64,7 +64,7 @@ class Node:
             return False
         return self.pos == other.pos
 
-    def get_neighbor_node(self, update: tuple[int, int]) -> object:
+    def get_neighbor_node(self, update: tuple[int, int]) -> 'Node':
         """
         Returns: the neighbor node
         """
@@ -77,7 +77,7 @@ class Node:
         """
         return self.pos
 
-    def get_neighbors(self) -> list[object]:
+    def get_neighbors(self) -> list['Node']:
         """
         return: a list of the neighbors of the node
         """
