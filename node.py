@@ -52,8 +52,10 @@ class Node:
 
     def __eq__(self, other: object) -> bool:
         """
-        return: whether the two nodes are equal
+        return: whether the two nodes are equal or whether the node has the same coordinates as the tuple
         """
+        if isinstance(other, tuple):
+            return self.pos == other
         if not isinstance(other, Node):
             return False
         return self.pos == other.pos
@@ -85,3 +87,12 @@ class Node:
         # Otherwise, return only the 4 cardinal neighbors
         return [self.get_neighbor_node((0, 1)), self.get_neighbor_node((1, 0)),
                 self.get_neighbor_node((0, -1)), self.get_neighbor_node((-1, 0))]
+
+    def traversable(self) -> bool:
+        """
+        return: True if the node can be traversed, False otherwise
+        """
+        # TODO: Implement this function
+        self.pos = (self.pos[0], self.pos[1])
+        return True
+
