@@ -92,7 +92,6 @@ class Node:
         """
         return: True if the node can be traversed, False otherwise
         """
-        # TODO: Implement this function
+        # TO DO: Implement this function
         self.pos = (self.pos[0], self.pos[1])
         return True
-
