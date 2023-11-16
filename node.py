@@ -48,14 +48,6 @@ class Node:
         """
         return f"Node: {self.pos}"
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> 'Node':
-        """
-        :param args: the arguments to pass to the Node class
-        :param kwargs: the keyword arguments to pass to the Node class
-        :return: a new instance of the Node class
-        """
-        return super().__new__(cls)
-
     def __eq__(self, other: object) -> bool:
         """
         return: whether the two nodes are equal
