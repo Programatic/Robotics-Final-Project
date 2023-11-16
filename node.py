@@ -1,7 +1,7 @@
 """
 This file contains the Node class, which is used to represent a node in the grid.
 """
-from typing import Callable, Any, Optional
+from typing import Callable, Optional
 
 
 class Node:
