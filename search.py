@@ -3,16 +3,18 @@ This file contains the search algorithms that are used to find the path from the
 """
 
 from typing import Callable, Optional
-from node import Node, Pos
+from node import Node, Position
 
-# Tuples of (x, y) coordinates of the maze's start and end
-start_coordinates: tuple[int, int] = (0, 0)
-end_coordinates: tuple[int, int] = (100, 100)
+# (x, y) coordinates of the maze's start and end
+# TODO: Change this to the start coordinates of the maze
+start_coordinates: Position = (0, 0)
+# TODO: Change this to the end coordinates of the maze
+end_coordinates: Position = (100, 100)
 
 
 '''
-def a_star(heuristic: Callable[[tuple[int, int], tuple[int, int]], int],
-           diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[tuple[int, int]]:
+def a_star(heuristic: Callable[[Position, Position], int],
+           diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param diagonal_neighbors: whether diagonal neighbors are allowed
@@ -24,25 +26,17 @@ def a_star(heuristic: Callable[[tuple[int, int], tuple[int, int]], int],
 '''
 
 
-def greedy_first(heuristic: Callable[[tuple[int, int], tuple[int, int]], int],
-                 diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[tuple[int, int]]:
+def greedy_first(heuristic: Callable[[Position, Position], int],
+                 diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param diagonal_neighbors: whether diagonal neighbors are allowed
     :param depth_limit: the depth limit of the search
     Returns: a list of nodes that represents the path from the start node to the end node
     """
-    # Initialize the start node
-    start = initialize_algorithm(heuristic, diagonal_neighbors)
-
-    # Initialize the frontier
-    frontier = [start]
-
-    # Initialize the explored set
+    # Initialize the frontier set, the explored set, and the depth
+    frontier, depth = initialize_algorithm(heuristic, diagonal_neighbors)
     explored = set()
-
-    # Initialize the depth
-    depth = 0
 
     # While the frontier is not empty
     while frontier and depth < depth_limit:
@@ -72,20 +66,46 @@ def greedy_first(heuristic: Callable[[tuple[int, int], tuple[int, int]], int],
     return []
 
 
-'''
-def beam(heuristic: Callable[[tuple[int, int], tuple[int, int]], int], k: int = 2,
-         diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[tuple[int, int]]:
+def beam(heuristic: Callable[[Position, Position], int], k: int = 2,
+         diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
+    :param k: the number of nodes to keep in the frontier
     :param diagonal_neighbors: whether diagonal neighbors are allowed
     :param depth_limit: the depth limit of the search
     Returns: a list of nodes that represents the path from the start node to the end node
     """
-    # TODO: Implement this function
+    # Initialize the frontier set and the depth
+    frontier, depth = initialize_algorithm(heuristic, diagonal_neighbors)
+
+    # While the frontier is not empty
+    while frontier and depth < depth_limit:
+        # Update the depth
+        depth += 1
+
+        next_frontier = []
+
+        # Add the neighbors to the frontier
+        for node in frontier:
+            # If the current node is the goal node
+            if node == end_coordinates:
+                return backtrack(node)
+
+            # Otherwise, add the traversable neighbors to the next frontier
+            next_frontier.extend([neighbor for neighbor in node.get_neighbors() if neighbor.traversable()])
+
+        # Sort the next frontier by their heuristic value
+        next_frontier.sort(key=lambda neighbor: neighbor.goal_distance)
+
+        # Set the frontier to the best k nodes in next frontier
+        frontier = next_frontier[:k]
+
+    # Return an empty list if the path is not found
     return []
 
 
-def brushfire(heuristic: Callable[[tuple[int, int], tuple[int, int]], int],
+'''
+def brushfire(heuristic: Callable[[Position, Position]], int],
               diagonal_neighbors: bool = False, depth_limit: int = 50) -> list['Node']:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
@@ -98,18 +118,17 @@ def brushfire(heuristic: Callable[[tuple[int, int], tuple[int, int]], int],
 '''
 
 
-def initialize_algorithm(heuristic: Callable[[tuple[int, int], tuple[int, int]], int],
-                         diagonal_neighbors: bool = False) -> Node:
+def initialize_algorithm(heuristic: Callable[[Position, Position], int],
+                         diagonal_neighbors: bool = False) -> tuple[list['Node'], int]:
     """
     This function is used to initialize anything that is needed for all of our algorithms to run.
-    Returns:
-
+    Returns: a tuple of a list of nodes containing the start node and the depth as 0
     """
-    return Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
-                diagonal_neighbors=diagonal_neighbors)
+    return [Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
+                 diagonal_neighbors=diagonal_neighbors)], 0
 
 
-def backtrack(last_node: Optional[Node]) -> list[tuple[int, int]]:
+def backtrack(last_node: Optional[Node]) -> list[Position]:
     """
     This function is used to backtrack from the last node to the first node.
     Returns: a list of nodes that represents the path from the start node to the end node
