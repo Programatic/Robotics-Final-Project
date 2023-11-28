@@ -148,7 +148,7 @@ def initialize_algorithm(heuristic: Callable[[Position, Position], int], distanc
     return queue, set(), 0
 
 
-def neighbors(current_node: 'Node', explored: Optional[set]) -> list['Node']:
+def neighbors(current_node: 'Node', explored: Optional[set['Node']]) -> list['Node']:
     """
     This function is used to get the neighbors of the current node that can be explored.
     :param current_node: the current node
