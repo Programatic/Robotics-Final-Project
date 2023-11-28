@@ -2,7 +2,7 @@
 This file contains the search algorithms that are used to find the path from the start node to the end node
 """
 from queue import PriorityQueue
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 from node import Node, Position
 
 # (x, y) coordinates of the maze's start and end
@@ -20,16 +20,11 @@ def a_star(heuristic: Callable[[Position, Position], int],
     :param depth_limit: the depth limit of the search
     Returns: a list of nodes that represents the path from the start node to the end node
     """
+    # Initialize the priority queue, the explored set, and the depth
+    queue, explored, depth = initialize_algorithm(heuristic, heuristic(start_coordinates, end_coordinates),
+                                                  diagonal_neighbors)
 
-    # Initialize the frontier set, the explored set, and the depth
-    frontier, depth = initialize_algorithm(heuristic, diagonal_neighbors)
-    explored = set()
-
-    # Initialize the priority queue
-    queue = PriorityQueue()
-    queue.put((frontier[0], frontier[0].start_distance + frontier[0].goal_distance))
-
-    # While the frontier is not empty
+    # While the queue is not empty and the depth limit is not reached
     while not queue.empty() and depth < depth_limit:
         # Update the depth
         depth += 1
@@ -47,9 +42,11 @@ def a_star(heuristic: Callable[[Position, Position], int],
         neighbors[:] = [neighbor for neighbor in neighbors if neighbor not in explored]
         neighbors[:] = [neighbor for neighbor in neighbors if neighbor.traversable()]
 
-        # Add the neighbors to the frontier
-        queue.put((neighbor, neighbor.start_distance + neighbor.goal_distance) for neighbor in neighbors)
+        # Add the neighbors to the queue
+        for neighbor in neighbors:
+            queue.put((neighbor, neighbor.start_distance + neighbor.goal_distance))
 
+    # Return an empty list if the path is not found
     return []
 
 
@@ -61,17 +58,17 @@ def greedy_first(heuristic: Callable[[Position, Position], int],
     :param depth_limit: the depth limit of the search
     Returns: a list of nodes that represents the path from the start node to the end node
     """
-    # Initialize the frontier set, the explored set, and the depth
-    frontier, depth = initialize_algorithm(heuristic, diagonal_neighbors)
-    explored = set()
+    # Initialize the priority queue, the explored set, and the depth
+    queue, explored, depth = initialize_algorithm(heuristic, heuristic(start_coordinates, end_coordinates),
+                                                  diagonal_neighbors)
 
-    # While the frontier is not empty
-    while frontier and depth < depth_limit:
+    # While the queue is not empty and the depth limit is not reached
+    while not queue.empty() and depth < depth_limit:
         # Update the depth
         depth += 1
 
         # Get the current node
-        current_node = frontier.pop(0)
+        current_node = queue.get()[0]
         explored.add(current_node)
 
         # If the current node is the goal node
@@ -83,11 +80,9 @@ def greedy_first(heuristic: Callable[[Position, Position], int],
         neighbors[:] = [neighbor for neighbor in neighbors if neighbor not in explored]
         neighbors[:] = [neighbor for neighbor in neighbors if neighbor.traversable()]
 
-        # Sort the neighbors by their heuristic value
-        neighbors.sort(key=lambda neighbor: neighbor.goal_distance)
-
-        # Add the neighbors to the frontier
-        frontier.extend(neighbors)
+        # Add the neighbors to the queue
+        for neighbor in neighbors:
+            queue.put((neighbor, neighbor.start_distance + neighbor.goal_distance))
 
     # Return an empty list if the path is not found
     return []
@@ -103,7 +98,9 @@ def beam(heuristic: Callable[[Position, Position], int], k: int = 2,
     Returns: a list of nodes that represents the path from the start node to the end node
     """
     # Initialize the frontier set and the depth
-    frontier, depth = initialize_algorithm(heuristic, diagonal_neighbors)
+    frontier = [Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
+                     diagonal_neighbors=diagonal_neighbors)]
+    depth = 0
 
     # While the frontier is not empty
     while frontier and depth < depth_limit:
@@ -146,14 +143,19 @@ def brushfire(heuristic: Callable[[Position, Position], int],
     return []
 
 
-def initialize_algorithm(heuristic: Callable[[Position, Position], int],
-                         diagonal_neighbors: bool = False) -> tuple[list['Node'], int]:
+def initialize_algorithm(heuristic: Callable[[Position, Position], int], distance: int,
+                         diagonal_neighbors: bool = False) -> Tuple[PriorityQueue[Tuple['Node', int]], set, int]:
     """
     This function is used to initialize anything that is needed for all of our algorithms to run.
-    Returns: a tuple of a list of nodes containing the start node and the depth as 0
+    :param heuristic: the heuristic function to use for calculating the distance between two nodes
+    :param distance: the initial distance between the start node and the end node
+    :param diagonal_neighbors: whether diagonal neighbors are allowed
+    Returns: a tuple of the priority queue, the explored set, and the depth
     """
-    return [Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
-                 diagonal_neighbors=diagonal_neighbors)], 0
+    queue: PriorityQueue[Tuple['Node', int]] = PriorityQueue()
+    queue.put((Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
+                    diagonal_neighbors=diagonal_neighbors), distance))
+    return queue, set(), 0
 
 
 def backtrack(last_node: Optional[Node]) -> list[Position]:
