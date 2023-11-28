@@ -134,7 +134,8 @@ def brushfire(heuristic: Callable[[Position, Position], int],
 
 
 def initialize_algorithm(heuristic: Callable[[Position, Position], int], distance: int,
-                         diagonal_neighbors: bool = False) -> Tuple[PriorityQueue[Tuple['Node', int]], set, int]:
+                         diagonal_neighbors: bool = False) -> Tuple[PriorityQueue[Tuple['Node', int]],
+                         set['Node'], int]:
     """
     This function is used to initialize anything that is needed for all of our algorithms to run.
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
