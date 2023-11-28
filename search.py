@@ -1,6 +1,7 @@
 """
 This file contains the search algorithms that are used to find the path from the start node to the end node
 """
+from queue import PriorityQueue
 from typing import Callable, Optional
 from node import Node, Position
 
@@ -11,7 +12,6 @@ start_coordinates: Position = (0, 0)
 end_coordinates: Position = (100, 100)
 
 
-'''
 def a_star(heuristic: Callable[[Position, Position], int],
            diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
     """
@@ -20,9 +20,37 @@ def a_star(heuristic: Callable[[Position, Position], int],
     :param depth_limit: the depth limit of the search
     Returns: a list of nodes that represents the path from the start node to the end node
     """
-    # TODO: Implement this function
+
+    # Initialize the frontier set, the explored set, and the depth
+    frontier, depth = initialize_algorithm(heuristic, diagonal_neighbors)
+    explored = set()
+
+    # Initialize the priority queue
+    queue = PriorityQueue()
+    queue.put((frontier[0], frontier[0].start_distance + frontier[0].goal_distance))
+
+    # While the frontier is not empty
+    while not queue.empty() and depth < depth_limit:
+        # Update the depth
+        depth += 1
+
+        # Get the current node and add it to the explored set
+        current_node = queue.get()[0]
+        explored.add(current_node)
+
+        # If the current node is the goal node
+        if current_node == end_coordinates:
+            return backtrack(current_node)
+
+        # Get the neighbors of the current node that can be explored
+        neighbors = current_node.get_neighbors()
+        neighbors[:] = [neighbor for neighbor in neighbors if neighbor not in explored]
+        neighbors[:] = [neighbor for neighbor in neighbors if neighbor.traversable()]
+
+        # Add the neighbors to the frontier
+        queue.put((neighbor, neighbor.start_distance + neighbor.goal_distance) for neighbor in neighbors)
+
     return []
-'''
 
 
 def greedy_first(heuristic: Callable[[Position, Position], int],
