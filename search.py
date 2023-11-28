@@ -37,13 +37,8 @@ def a_star(heuristic: Callable[[Position, Position], int],
         if current_node == end_coordinates:
             return backtrack(current_node)
 
-        # Get the neighbors of the current node that can be explored
-        neighbors = current_node.get_neighbors()
-        neighbors[:] = [neighbor for neighbor in neighbors if neighbor not in explored]
-        neighbors[:] = [neighbor for neighbor in neighbors if neighbor.traversable()]
-
-        # Add the neighbors to the queue
-        for neighbor in neighbors:
+        # Add the neighbors that can be explored to the queue
+        for neighbor in neighbors(current_node, explored):
             queue.put((neighbor, neighbor.start_distance + neighbor.goal_distance))
 
     # Return an empty list if the path is not found
@@ -75,13 +70,8 @@ def greedy_first(heuristic: Callable[[Position, Position], int],
         if current_node == end_coordinates:
             return backtrack(current_node)
 
-        # Get the neighbors of the current node that can be explored
-        neighbors = current_node.get_neighbors()
-        neighbors[:] = [neighbor for neighbor in neighbors if neighbor not in explored]
-        neighbors[:] = [neighbor for neighbor in neighbors if neighbor.traversable()]
-
-        # Add the neighbors to the queue
-        for neighbor in neighbors:
+        # Add the neighbors that can be explored to the queue
+        for neighbor in neighbors(current_node, explored):
             queue.put((neighbor, neighbor.start_distance + neighbor.goal_distance))
 
     # Return an empty list if the path is not found
@@ -156,6 +146,18 @@ def initialize_algorithm(heuristic: Callable[[Position, Position], int], distanc
     queue.put((Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
                     diagonal_neighbors=diagonal_neighbors), distance))
     return queue, set(), 0
+
+
+def neighbors(current_node: 'Node', explored: set) -> list['Node']:
+    """
+    This function is used to get the neighbors of the current node that can be explored.
+    :param current_node: the current node
+    :param explored: the explored set
+    Returns: a list of nodes that represents the neighbors of the current node that can be explored
+    """
+    neighbor_nodes = current_node.get_neighbors()
+    neighbor_nodes[:] = [neighbor for neighbor in neighbor_nodes if neighbor not in explored]
+    return [neighbor for neighbor in neighbor_nodes if neighbor.traversable()]
 
 
 def backtrack(last_node: Optional[Node]) -> list[Position]:
