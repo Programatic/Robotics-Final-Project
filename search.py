@@ -119,7 +119,7 @@ def beam(heuristic: Callable[[Position, Position], int], k: int = 2,
 
 
 def brushfire(heuristic: Callable[[Position, Position], int],
-              diagonal_neighbors: bool = False, depth_limit: int = 50) -> list['Node']:
+              diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param diagonal_neighbors: whether diagonal neighbors are allowed
@@ -130,6 +130,39 @@ def brushfire(heuristic: Callable[[Position, Position], int],
     heuristic(start_coordinates, end_coordinates)
     if diagonal_neighbors:
         depth_limit = max(heuristic(start_coordinates, end_coordinates), depth_limit)
+    return []
+
+
+def djikstra(heuristic: Callable[[Position, Position], int], diagonal_neighbors: bool = False,
+             depth_limit: int = 50) -> list[Position]:
+    """
+    Uses DJIKSTRA's algorithm to find the path from the start node to the end node.
+    :param heuristic: the heuristic function to use for calculating the distance between two nodes
+    :param diagonal_neighbors: whether diagonal neighbors are allowed
+    :param depth_limit: the depth limit of the search
+    Returns: a list of nodes that represents the path from the start node to the end node
+    """
+    # Initialize the priority queue, the explored set, and the depth
+    queue, explored, depth = initialize_algorithm(heuristic, 0, diagonal_neighbors)
+
+    # While the queue is not empty and the depth limit is not reached
+    while not queue.empty() and depth < depth_limit:
+        # Update the depth
+        depth += 1
+
+        # Get the current node
+        current_node = queue.get()[0]
+        explored.add(current_node)
+
+        # If the current node is the goal node
+        if current_node == end_coordinates:
+            return backtrack(current_node)
+
+        # Add the neighbors that can be explored to the queue
+        for neighbor in neighbors(current_node, explored):
+            queue.put((neighbor, neighbor.start_distance))
+
+    # Return an empty list if the path is not found
     return []
 
 
