@@ -1,7 +1,7 @@
 """
 This file contains the search algorithms that are used to find the path from the start node to the end node
 """
-from typing import Callable, Optional
+from typing import Optional
 from node import Node, Position, HeuristicFunction
 
 # (x, y) coordinates of the maze's start and end
