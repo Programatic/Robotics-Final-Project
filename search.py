@@ -2,8 +2,8 @@
 This file contains the search algorithms that are used to find the path from the start node to the end node
 """
 from queue import PriorityQueue
-from typing import Callable, Optional, Tuple
-from node import Node, Position
+from typing import Optional
+from node import Node, Position, HeuristicFunction
 
 # (x, y) coordinates of the maze's start and end
 # TO DO: Change this to the start coordinates of the maze
@@ -12,7 +12,7 @@ start_coordinates: Position = (0, 0)
 end_coordinates: Position = (100, 100)
 
 
-def a_star(heuristic: Callable[[Position, Position], int],
+def a_star(heuristic: HeuristicFunction,
            diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
@@ -45,8 +45,8 @@ def a_star(heuristic: Callable[[Position, Position], int],
     return []
 
 
-def greedy_first(heuristic: Callable[[Position, Position], int],
-                 diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
+def greedy_first(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
+                 depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param diagonal_neighbors: whether diagonal neighbors are allowed
@@ -78,8 +78,8 @@ def greedy_first(heuristic: Callable[[Position, Position], int],
     return []
 
 
-def beam(heuristic: Callable[[Position, Position], int], k: int = 2,
-         diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
+def beam(heuristic: HeuristicFunction, k: int = 2, diagonal_neighbors: bool = False,
+         depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param k: the number of nodes to keep in the frontier
@@ -118,8 +118,8 @@ def beam(heuristic: Callable[[Position, Position], int], k: int = 2,
     return []
 
 
-def brushfire(heuristic: Callable[[Position, Position], int],
-              diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
+def brushfire(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
+              depth_limit: int = 50) -> list['Node']:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param diagonal_neighbors: whether diagonal neighbors are allowed
@@ -133,7 +133,7 @@ def brushfire(heuristic: Callable[[Position, Position], int],
     return []
 
 
-def djikstra(heuristic: Callable[[Position, Position], int], diagonal_neighbors: bool = False,
+def djikstra(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
              depth_limit: int = 50) -> list[Position]:
     """
     Uses DJIKSTRA's algorithm to find the path from the start node to the end node.
@@ -166,8 +166,8 @@ def djikstra(heuristic: Callable[[Position, Position], int], diagonal_neighbors:
     return []
 
 
-def initialize_algorithm(heuristic: Callable[[Position, Position], int], distance: int,
-                         diagonal_neighbors: bool = False) -> Tuple[PriorityQueue[Tuple['Node', int]],
+def initialize_algorithm(heuristic: HeuristicFunction, distance: int,
+                         diagonal_neighbors: bool = False) -> tuple[PriorityQueue[tuple['Node', int]],
                          set['Node'], int]:
     """
     This function is used to initialize anything that is needed for all of our algorithms to run.
@@ -176,7 +176,7 @@ def initialize_algorithm(heuristic: Callable[[Position, Position], int], distanc
     :param diagonal_neighbors: whether diagonal neighbors are allowed
     Returns: a tuple of the priority queue, the explored set, and the depth
     """
-    queue: PriorityQueue[Tuple['Node', int]] = PriorityQueue()
+    queue: PriorityQueue[tuple['Node', int]] = PriorityQueue()
     queue.put((Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
                     diagonal_neighbors=diagonal_neighbors), distance))
     return queue, set(), 0
@@ -195,13 +195,13 @@ def neighbors(current_node: 'Node', explored: Optional[set['Node']]) -> list['No
     return [neighbor for neighbor in neighbor_nodes if neighbor.traversable()]
 
 
-def backtrack(last_node: Optional[Node]) -> list[Position]:
+def backtrack(last_node: Node) -> list[Position]:
     """
     This function is used to backtrack from the last node to the first node.
     Returns: a list of nodes that represents the path from the start node to the end node
     """
     path = []
-    current_node = last_node
+    current_node: Optional[Node] = last_node
     while current_node is not None:
         path.append(current_node.get_coordinates())
         current_node = current_node.parent
