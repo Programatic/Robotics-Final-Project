@@ -4,6 +4,7 @@ This file contains the Node class, which is used to represent a node in the grid
 from typing import Callable, Optional, TypeAlias
 
 Position: TypeAlias = tuple[int, int]
+HeuristicFunction: TypeAlias = Callable[[Position, Position], int]
 
 
 class Node:
@@ -22,7 +23,7 @@ class Node:
     """
 
     def __init__(self, pos: Position, destination: Position,
-                 heuristic_function: Callable[[Position, Position], int],
+                 heuristic_function: HeuristicFunction,
                  parent: Optional['Node'] = None, start_distance: int = 0,
                  diagonal_neighbors: bool = False):
         """
