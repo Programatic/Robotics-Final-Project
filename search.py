@@ -2,7 +2,7 @@
 This file contains the search algorithms that are used to find the path from the start node to the end node
 """
 from typing import Callable, Optional
-from node import Node, Position
+from node import Node, Position, HeuristicFunction
 
 # (x, y) coordinates of the maze's start and end
 # TO DO: Change this to the start coordinates of the maze
@@ -25,8 +25,8 @@ def a_star(heuristic: Callable[[Position, Position], int],
 '''
 
 
-def greedy_first(heuristic: Callable[[Position, Position], int],
-                 diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
+def greedy_first(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
+                 depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param diagonal_neighbors: whether diagonal neighbors are allowed
@@ -65,8 +65,8 @@ def greedy_first(heuristic: Callable[[Position, Position], int],
     return []
 
 
-def beam(heuristic: Callable[[Position, Position], int], k: int = 2,
-         diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
+def beam(heuristic: HeuristicFunction, k: int = 2, diagonal_neighbors: bool = False,
+         depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param k: the number of nodes to keep in the frontier
@@ -103,8 +103,8 @@ def beam(heuristic: Callable[[Position, Position], int], k: int = 2,
     return []
 
 
-def brushfire(heuristic: Callable[[Position, Position], int],
-              diagonal_neighbors: bool = False, depth_limit: int = 50) -> list['Node']:
+def brushfire(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
+              depth_limit: int = 50) -> list['Node']:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param diagonal_neighbors: whether diagonal neighbors are allowed
@@ -118,7 +118,7 @@ def brushfire(heuristic: Callable[[Position, Position], int],
     return []
 
 
-def initialize_algorithm(heuristic: Callable[[Position, Position], int],
+def initialize_algorithm(heuristic: HeuristicFunction,
                          diagonal_neighbors: bool = False) -> tuple[list['Node'], int]:
     """
     This function is used to initialize anything that is needed for all of our algorithms to run.
@@ -128,13 +128,13 @@ def initialize_algorithm(heuristic: Callable[[Position, Position], int],
                  diagonal_neighbors=diagonal_neighbors)], 0
 
 
-def backtrack(last_node: Optional[Node]) -> list[Position]:
+def backtrack(last_node: Node) -> list[Position]:
     """
     This function is used to backtrack from the last node to the first node.
     Returns: a list of nodes that represents the path from the start node to the end node
     """
     path = []
-    current_node = last_node
+    current_node: Optional[Node] = last_node
     while current_node is not None:
         path.append(current_node.get_coordinates())
         current_node = current_node.parent
