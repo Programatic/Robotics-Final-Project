@@ -7,13 +7,13 @@ Created on Sat Jul  1 20:31:06 2023
 Modified to conform to Linter and Typing standards
 """
 
-from typing import Type, Any, List
+from typing import Any
 import numpy as np
 import numpy.typing as npt
 
 # The simulator type is a runtime defined class, thus not really capable of type hinting it
-Simulator = Type[Any]
-Handle = Type[Any]
+Simulator = type[Any]
+Handle = type[Any]
 
 
 class GridMap:
@@ -115,7 +115,7 @@ class GridMap:
 
         return self.gridmap
 
-    def get_grid_coords(self, point_xyz: List[float]) -> Any:
+    def get_grid_coords(self, point_xyz: list[float]) -> Any:
         """
         Parameters
         ----------
