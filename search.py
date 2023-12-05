@@ -1,6 +1,7 @@
 """
 This file contains the search algorithms that are used to find the path from the start node to the end node
 """
+from queue import PriorityQueue
 from typing import Optional
 from node import Node, Position, HeuristicFunction
 
@@ -11,8 +12,7 @@ start_coordinates: Position = (0, 0)
 end_coordinates: Position = (100, 100)
 
 
-'''
-def a_star(heuristic: Callable[[Position, Position], int],
+def a_star(heuristic: HeuristicFunction,
            diagonal_neighbors: bool = False, depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
@@ -20,9 +20,29 @@ def a_star(heuristic: Callable[[Position, Position], int],
     :param depth_limit: the depth limit of the search
     Returns: a list of nodes that represents the path from the start node to the end node
     """
-    # TODO: Implement this function
+    # Initialize the priority queue, the explored set, and the depth
+    queue, explored, depth = initialize_algorithm(heuristic, heuristic(start_coordinates, end_coordinates),
+                                                  diagonal_neighbors)
+
+    # While the queue is not empty and the depth limit is not reached
+    while not queue.empty() and depth < depth_limit:
+        # Update the depth
+        depth += 1
+
+        # Get the current node and add it to the explored set
+        current_node = queue.get()[0]
+        explored.add(current_node)
+
+        # If the current node is the goal node
+        if current_node == end_coordinates:
+            return backtrack(current_node)
+
+        # Add the neighbors that can be explored to the queue
+        for neighbor in neighbors(current_node, explored):
+            queue.put((neighbor, neighbor.start_distance + neighbor.goal_distance))
+
+    # Return an empty list if the path is not found
     return []
-'''
 
 
 def greedy_first(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
@@ -33,33 +53,26 @@ def greedy_first(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
     :param depth_limit: the depth limit of the search
     Returns: a list of nodes that represents the path from the start node to the end node
     """
-    # Initialize the frontier set, the explored set, and the depth
-    frontier, depth = initialize_algorithm(heuristic, diagonal_neighbors)
-    explored = set()
+    # Initialize the priority queue, the explored set, and the depth
+    queue, explored, depth = initialize_algorithm(heuristic, heuristic(start_coordinates, end_coordinates),
+                                                  diagonal_neighbors)
 
-    # While the frontier is not empty
-    while frontier and depth < depth_limit:
+    # While the queue is not empty and the depth limit is not reached
+    while not queue.empty() and depth < depth_limit:
         # Update the depth
         depth += 1
 
         # Get the current node
-        current_node = frontier.pop(0)
+        current_node = queue.get()[0]
         explored.add(current_node)
 
         # If the current node is the goal node
         if current_node == end_coordinates:
             return backtrack(current_node)
 
-        # Get the neighbors of the current node that can be explored
-        neighbors = current_node.get_neighbors()
-        neighbors[:] = [neighbor for neighbor in neighbors if neighbor not in explored]
-        neighbors[:] = [neighbor for neighbor in neighbors if neighbor.traversable()]
-
-        # Sort the neighbors by their heuristic value
-        neighbors.sort(key=lambda neighbor: neighbor.goal_distance)
-
-        # Add the neighbors to the frontier
-        frontier.extend(neighbors)
+        # Add the neighbors that can be explored to the queue
+        for neighbor in neighbors(current_node, explored):
+            queue.put((neighbor, neighbor.start_distance + neighbor.goal_distance))
 
     # Return an empty list if the path is not found
     return []
@@ -75,7 +88,9 @@ def beam(heuristic: HeuristicFunction, k: int = 2, diagonal_neighbors: bool = Fa
     Returns: a list of nodes that represents the path from the start node to the end node
     """
     # Initialize the frontier set and the depth
-    frontier, depth = initialize_algorithm(heuristic, diagonal_neighbors)
+    frontier = [Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
+                     diagonal_neighbors=diagonal_neighbors)]
+    depth = 0
 
     # While the frontier is not empty
     while frontier and depth < depth_limit:
@@ -91,7 +106,7 @@ def beam(heuristic: HeuristicFunction, k: int = 2, diagonal_neighbors: bool = Fa
                 return backtrack(node)
 
             # Otherwise, add the traversable neighbors to the next frontier
-            next_frontier.extend([neighbor for neighbor in node.get_neighbors() if neighbor.traversable()])
+            next_frontier.extend(neighbors(node, None))
 
         # Sort the next frontier by their heuristic value
         next_frontier.sort(key=lambda neighbor: neighbor.goal_distance)
@@ -118,14 +133,66 @@ def brushfire(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
     return []
 
 
-def initialize_algorithm(heuristic: HeuristicFunction,
-                         diagonal_neighbors: bool = False) -> tuple[list['Node'], int]:
+def djikstra(heuristic: HeuristicFunction, diagonal_neighbors: bool = False,
+             depth_limit: int = 50) -> list[Position]:
+    """
+    Uses DJIKSTRA's algorithm to find the path from the start node to the end node.
+    :param heuristic: the heuristic function to use for calculating the distance between two nodes
+    :param diagonal_neighbors: whether diagonal neighbors are allowed
+    :param depth_limit: the depth limit of the search
+    Returns: a list of nodes that represents the path from the start node to the end node
+    """
+    # Initialize the priority queue, the explored set, and the depth
+    queue, explored, depth = initialize_algorithm(heuristic, 0, diagonal_neighbors)
+
+    # While the queue is not empty and the depth limit is not reached
+    while not queue.empty() and depth < depth_limit:
+        # Update the depth
+        depth += 1
+
+        # Get the current node
+        current_node = queue.get()[0]
+        explored.add(current_node)
+
+        # If the current node is the goal node
+        if current_node == end_coordinates:
+            return backtrack(current_node)
+
+        # Add the neighbors that can be explored to the queue
+        for neighbor in neighbors(current_node, explored):
+            queue.put((neighbor, neighbor.start_distance))
+
+    # Return an empty list if the path is not found
+    return []
+
+
+def initialize_algorithm(heuristic: HeuristicFunction, distance: int,
+                         diagonal_neighbors: bool = False) -> tuple[PriorityQueue[tuple['Node', int]],
+                         set['Node'], int]:
     """
     This function is used to initialize anything that is needed for all of our algorithms to run.
-    Returns: a tuple of a list of nodes containing the start node and the depth as 0
+    :param heuristic: the heuristic function to use for calculating the distance between two nodes
+    :param distance: the initial distance between the start node and the end node
+    :param diagonal_neighbors: whether diagonal neighbors are allowed
+    Returns: a tuple of the priority queue, the explored set, and the depth
     """
-    return [Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
-                 diagonal_neighbors=diagonal_neighbors)], 0
+    queue: PriorityQueue[tuple['Node', int]] = PriorityQueue()
+    queue.put((Node(pos=start_coordinates, destination=end_coordinates, heuristic_function=heuristic,
+                    diagonal_neighbors=diagonal_neighbors), distance))
+    return queue, set(), 0
+
+
+def neighbors(current_node: 'Node', explored: Optional[set['Node']]) -> list['Node']:
+    """
+    This function is used to get the neighbors of the current node that can be explored.
+    :param current_node: the current node
+    :param explored: the explored set
+    Returns: a list of nodes that represents the neighbors of the current node that can be explored
+    """
+    neighbor_nodes = current_node.get_neighbors()
+    if explored is not None:
+        neighbor_nodes[:] = [neighbor for neighbor in neighbor_nodes if neighbor not in explored]
+    return [neighbor for neighbor in neighbor_nodes if neighbor.traversable()]
 
 
 def backtrack(last_node: Node) -> list[Position]:
