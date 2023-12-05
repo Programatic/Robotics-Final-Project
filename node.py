@@ -1,49 +1,36 @@
 """
 This file contains the Node class, which is used to represent a node in the grid.
 """
-from typing import Callable, Optional, TypeAlias
+from functools import total_ordering
+from typing import Any, Callable, Optional, TypeAlias
+
+import numpy as np
 
 Position: TypeAlias = tuple[int, int]
 HeuristicFunction: TypeAlias = Callable[[Position, Position], int]
 
 
+# Used to generate other comparisons from __eq__ and __lt__
+@total_ordering
 class Node:
-    """
-    This class represents a node in the grid.
+    """Node Class"""
+    worldmap_reference: np.ndarray['Node', Any]
+    end_coordinate: Position
+    diagonal_neighbors: bool = False
+    cost_addition: int = 1
 
-    Attributes:
-        pos: the (x, y) coordinates of the node
-        parent: the (x, y) coordinates of the parent node
-        start_distance: the distance from the start node
-        goal_distance: the distance from the goal node
-        diagonal_neighbors: whether diagonal neighbors are allowed
-
-    Methods:
-        get_neighbors: returns a list of the neighbors of the node
-    """
-
-    def __init__(self, pos: Position, destination: Position,
-                 heuristic_function: HeuristicFunction,
-                 parent: Optional['Node'] = None, start_distance: int = 0,
-                 diagonal_neighbors: bool = False):
+    def __init__(self, pos: Position, is_obstacle: bool, heuristic_distance: int):
         """
         :param pos: the (x, y) coordinates of the node
         :param destination: the (x, y) coordinates of the destination node
         :param heuristic_function: the heuristic function to use
-        :param parent: the parent node
-        :param start_distance: the distance from the start node
         :param diagonal_neighbors: whether diagonal neighbors are allowed
         """
-        # Node's Positions
         self.pos = pos
-        self.destination = destination
-        self.parent = parent
-
-        # Distances
-        self.heuristic_function = heuristic_function
-        self.start_distance = start_distance
-        self.goal_distance = heuristic_function(pos, destination)
-        self.diagonal_neighbors = diagonal_neighbors
+        self.is_obstacle = is_obstacle
+        self.heuristic_distance = heuristic_distance
+        self.parent_node: Optional['Node'] = None
+        self.cost = 0
 
     def __str__(self) -> str:
         """
@@ -61,12 +48,37 @@ class Node:
             return False
         return self.pos == other.pos
 
-    def get_neighbor_node(self, update: Position) -> 'Node':
+    def __lt__(self, other: object) -> bool:
+        """Implements less than for Nodes."""
+        if isinstance(other, Node):
+            return self.heuristic_distance < other.heuristic_distance
+        raise NotImplementedError("Only supports comparison of Nodes.")
+
+    def __hash__(self) -> int:
+        """
+        Node hash function.
+
+        Returns
+        -------
+        int
+            Hash code.
+        """
+        return hash(self.pos)
+
+    def get_neighbor_node(self, update: Position) -> Optional['Node']:
         """
         Returns: the neighbor node
         """
-        return Node((self.pos[0] + update[0], self.pos[1] + update[1]), self.destination,
-                    self.heuristic_function, self, self.start_distance + 1, self.diagonal_neighbors)
+        x = self.pos[0] + update[0]
+        y = self.pos[1] + update[1]
+
+        if x < 0 or y < 0:
+            return None
+
+        if x > len(self.worldmap_reference) - 1 or y > len(self.worldmap_reference[0]) - 1:
+            return None
+
+        return self.worldmap_reference[x, y] # type: ignore
 
     def get_coordinates(self) -> Position:
         """
@@ -80,19 +92,27 @@ class Node:
         """
         # if diagonal neighbors are allowed, return all 8 neighbors
         if self.diagonal_neighbors:
-            return [self.get_neighbor_node((0, 1)), self.get_neighbor_node((1, 0)),
-                    self.get_neighbor_node((0, -1)), self.get_neighbor_node((-1, 0)),
-                    self.get_neighbor_node((1, 1)), self.get_neighbor_node((1, -1)),
-                    self.get_neighbor_node((-1, 1)), self.get_neighbor_node((-1, -1))]
+            node_with_none_list = [self.get_neighbor_node((0, 1)), self.get_neighbor_node((1, 0)),
+                                   self.get_neighbor_node((0, -1)), self.get_neighbor_node((-1, 0)),
+                                   self.get_neighbor_node((1, 1)), self.get_neighbor_node((1, -1)),
+                                   self.get_neighbor_node((-1, 1)), self.get_neighbor_node((-1, -1))]
+        else:
+            node_with_none_list = [self.get_neighbor_node((0, 1)), self.get_neighbor_node((1, 0)),
+                                   self.get_neighbor_node((0, -1)), self.get_neighbor_node((-1, 0))]
 
-        # Otherwise, return only the 4 cardinal neighbors
-        return [self.get_neighbor_node((0, 1)), self.get_neighbor_node((1, 0)),
-                self.get_neighbor_node((0, -1)), self.get_neighbor_node((-1, 0))]
+        node_list: list[Node] = []
+
+        for node_none in node_with_none_list:
+            if node_none:
+                node_none.parent_node = self
+                node_none.cost += self.cost_addition
+                node_none.heuristic_distance += node_none.cost
+                node_list.append(node_none)
+
+        return node_list
 
     def traversable(self) -> bool:
         """
         return: True if the node can be traversed, False otherwise
         """
-        # TO DO: Implement this function
-        self.pos = (self.pos[0], self.pos[1])
-        return True
+        return not self.is_obstacle

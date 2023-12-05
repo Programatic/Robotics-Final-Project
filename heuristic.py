@@ -52,7 +52,14 @@ def octile_distance(node1: Position, node2: Position) -> int:
     return int(dx + dy + (2 ** 0.5 - 2) * min(dx, dy))
 
 
-def bozo_distance() -> int:
+def no_heuristic(_: Position, __: Position) -> int:
+    """
+    Returns 0 for no no_heuristic.
+    """
+    return 0
+
+
+def bozo_distance(_: Position, __: Position) -> int:
     """
     Calculates the Bozo distance between two nodes.
 
