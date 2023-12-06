@@ -23,6 +23,7 @@ jobs:
         pip install pylint
         pip install mypy
         pip install numpy
+        pip install coppeliasim-zmqremoteapi-client
     - name: Analysing the code with pylint
       run: |
         pylint . --recursive=y

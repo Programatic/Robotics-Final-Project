@@ -8,8 +8,11 @@ Modified to conform to Linter and Typing standards
 """
 
 from typing import Any
+
 import numpy as np
 import numpy.typing as npt
+
+from node import HeuristicFunction, Node
 
 # The simulator type is a runtime defined class, thus not really capable of type hinting it
 Simulator = type[Any]
@@ -104,11 +107,7 @@ class GridMap:
                         for move in movements:  # Inflate the obstacle
                             new_row = row + move[0]
                             new_col = col + move[1]
-                            if (
-                                0 <= new_row < rows
-                                and 0 <= new_col < cols
-                                and inflated_grid[new_row][new_col] > 200
-                            ):
+                            if 0 <= new_row < rows and 0 <= new_col < cols:
                                 inflated_temp[new_row][new_col] = infl_val
             inflated_grid = np.copy(inflated_temp)
             self.gridmap = np.copy(inflated_grid)
@@ -133,15 +132,20 @@ class GridMap:
 
         return pos
 
-    def get_world_coords(self, point_xyz: npt.NDArray[Any]) -> npt.NDArray[Any]:
+    def get_world_coords(self, point_xyz: list[tuple[int, int]]) -> npt.NDArray[Any]:
         """
         Parameters
         ----------
         point_xyz : TYPE
         """
-        pos: npt.NDArray[Any] = (np.array(point_xyz) - self.offset) * self.scaling
+        point_xyz_np: npt.NDArray[Any] = np.array(point_xyz)
+        point_xyz_np[:, 0:2] = np.flip(point_xyz_np[:, 0:2])
+        pos = (
+            np.hstack((point_xyz_np, np.zeros(len(point_xyz_np)).reshape(-1, 1)))
+            - self.offset
+        ) * self.scaling
 
-        return pos
+        return pos # type: ignore
 
     def normalize_map(self) -> None:
         """
@@ -155,6 +159,34 @@ class GridMap:
         self.norm_map[self.norm_map == 0] = 3  # temporarily assign obstacles as 3
         self.norm_map[self.norm_map == 1] = 0  # set free space to 0s
         self.norm_map[self.norm_map == 3] = 1  # convert obstacle back into 1s
+
+    def world_to_nodes(self, heuristic_function: HeuristicFunction) -> npt.NDArray[Any]:
+        """
+        Turns Grid into Grid of Nodes.
+
+        Parameters
+        ----------
+        heuristic_function : HeuristicFunction
+            function to apply to calculate the heuristic
+
+        Returns
+        -------
+        np.ndarray[Node]
+            2D Array of Nodes
+        """
+        nodes = []
+        for i in range(self.norm_map.shape[0]):
+            for j in range(self.norm_map.shape[1]):
+                pos = (i, j)
+                nodes.append(
+                    Node(
+                        pos,
+                        self.norm_map[i, j] == 1,
+                        heuristic_function(pos, Node.end_coordinate),
+                    )
+                )
+
+        return np.array(nodes).reshape(i + 1, j + 1)
 
 
 def generate_path_from_trace(
@@ -181,12 +213,12 @@ def generate_path_from_trace(
         and time (t) information.
 
     """
+    trace_path_np: npt.NDArray[Any] = np.array(trace_path)
+    n, _ = trace_path_np.shape
 
-    n, _ = trace_path.shape
+    trace_path_np = np.hstack((trace_path_np, np.zeros((n, 3)), np.ones((n, 1))))
 
-    trace_path = np.hstack((trace_path, np.zeros((n, 3)), np.ones((n, 1))))
-
-    path = np.array(trace_path).astype(float)
+    path = np.array(trace_path_np).astype(float)
     path_handle = sim.createPath(
         list(path.reshape(-1)), 16, num_smoothing_points, 1.0, 0, [1.0, 0.0, 0.0]
     )
@@ -236,7 +268,5 @@ def execute_path(
         trackpt_pos = sim.getObjectPosition(trackpoint_handle, sim.handle_world)
         # compute the distance between the trackpt position and the robot
         rob_trackpt_dist = np.linalg.norm(np.array(robot_pos) - np.array(trackpt_pos))
-        print(rob_trackpt_dist)
         if rob_trackpt_dist < thresh:
             path_index = path_index + 1
-            print("next_point")
