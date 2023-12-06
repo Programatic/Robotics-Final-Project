@@ -35,7 +35,7 @@ Node.end_coordinate = tuple(goal_grid)[::-1]
 algorithm = None
 heuristic_choice = None
 diagonal_neighbors = False
-depth_limit = 1000000
+depth_limit = 10000
 try:
     algorithm = sys.argv[1]
     heuristic_choice = sys.argv[2]
@@ -43,7 +43,7 @@ try:
     depth_limit = int(sys.argv[4])
 except IndexError:
     print("Not all arguments so using some default values.")
-    print(depth_limit)
+    print(f'Depth limit = {depth_limit}')
 
 heuristic_func: Optional[HeuristicFunction] = None
 

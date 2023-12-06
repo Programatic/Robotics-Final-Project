@@ -7,12 +7,13 @@ Created on Sat Jul  1 20:31:06 2023
 Modified to conform to Linter and Typing standards
 """
 
+from queue import PriorityQueue
 from typing import Any
 
 import numpy as np
 import numpy.typing as npt
 
-from node import HeuristicFunction, Node
+from node import HeuristicFunction, Node, Position
 
 # The simulator type is a runtime defined class, thus not really capable of type hinting it
 Simulator = type[Any]
@@ -270,3 +271,34 @@ def execute_path(
         rob_trackpt_dist = np.linalg.norm(np.array(robot_pos) - np.array(trackpt_pos))
         if rob_trackpt_dist < thresh:
             path_index = path_index + 1
+
+
+def initialize_algorithm(start: Position) -> tuple[PriorityQueue[Node], set[Node], int]:
+    """
+    This function is used to initialize anything that is needed for all of our algorithms to run.
+    :param heuristic: the heuristic function to use for calculating the distance between two nodes
+    :param distance: the initial distance between the start node and the end node
+    :param diagonal_neighbors: whether diagonal neighbors are allowed
+    Returns: a tuple of the priority queue, the explored set, and the depth
+    """
+    queue: PriorityQueue[Node] = PriorityQueue()
+    queue.put(Node.worldmap_reference[start[0], start[1]])
+    return queue, set(), 0
+
+
+def backtrack(node: Node, start: Position) -> list[Position]:
+    """
+    This function is used to backtrack from the last node to the first node.
+    Returns: a list of nodes that represents the path from the start node to the end node
+    """
+    path: list[Position] = []
+    curr_node: Node = node
+    while curr_node.get_coordinates() != start:
+        path.append(curr_node.get_coordinates())
+        new_node = curr_node.parent_node
+        if new_node is None:
+            raise ValueError("Bad things have happened.")
+        curr_node = new_node
+    # Reverse order
+    path.reverse()
+    return path
