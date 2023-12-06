@@ -46,7 +46,7 @@ class Node:
             return self.pos == other
         if not isinstance(other, Node):
             return False
-        return self.pos == other.pos
+        return self.pos == other.pos and self.heuristic_distance == other.heuristic_distance
 
     def __lt__(self, other: object) -> bool:
         """Implements less than for Nodes."""
@@ -86,7 +86,7 @@ class Node:
         """
         return self.pos
 
-    def get_neighbors(self) -> list['Node']:
+    def get_neighbors(self, explored: set['Node']) -> list['Node']:
         """
         return: a list of the neighbors of the node
         """
@@ -104,6 +104,13 @@ class Node:
 
         for node_none in node_with_none_list:
             if node_none:
+
+                if node_none in explored:
+                    continue
+
+                if not node_none.traversable():
+                    continue
+
                 node_none.parent_node = self
                 node_none.cost += self.cost_addition
                 node_none.heuristic_distance += node_none.cost
