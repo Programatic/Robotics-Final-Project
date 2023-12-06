@@ -112,7 +112,7 @@ class Node:
                     continue
 
                 node_none.parent_node = self
-                node_none.cost += self.cost_addition
+                node_none.cost = self.cost_addition + self.cost
                 node_none.heuristic_distance += node_none.cost
                 node_list.append(node_none)
 
