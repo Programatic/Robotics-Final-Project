@@ -67,7 +67,6 @@ match algorithm:
     case 'beam':
         search_func = search.beam
         search.beam_frontier_size = frontier_size
-        print(search.beam_frontier_size)
         Node.cost_addition = 0
     case 'djikstra':
         search_func = search.djikstra
