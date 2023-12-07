@@ -44,11 +44,11 @@ Space Complexity: O(b)
 
 - Manhattan - $\Delta x + \Delta y$
 
-- Euclidean - $\sqrt{(\Delta x)^2 + (\Delta y)^2}
+- Euclidean - $\sqrt{(\Delta x)^2 + (\Delta y)^2}$
 
-- Chebyshev - max{$\Delta x, \Delta y$}
+- Chebyshev - max{ $\Delta x, \Delta y$ }
 
-- Octile - $\Delta x + \Delta y + (\sqrt{2} - 2) *$ min{$\Delta x, \Delta y$}
+- Octile - $\Delta x + \Delta y + (\sqrt{2} - 2) *$ min{ $\Delta x, \Delta y$ }
 
 - Bozo - Random
 
