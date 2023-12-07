@@ -27,7 +27,6 @@ Runtime: O(d log b)
 Space Complexity: O(b)
 
 # Heuristics: 
-All videos for the heuristics are shown using the Greedy algorithm
 
 ## 1) Greedy:
 [Manhattan](https://youtu.be/X4M8PvoTzAQ)
