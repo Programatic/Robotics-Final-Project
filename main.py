@@ -28,6 +28,7 @@ goal_world = sim.getObjectPosition(goal, sim.handle_world)  # pylint: disable=no
 robot = sim.getObjectHandle("/PioneerP3DX")  # pylint: disable=no-member
 start_world = sim.getObjectPosition(robot, sim.handle_world)  # pylint: disable=no-member
 
+# Move trackpoint to robot because sometimes it did not properly reset its position
 sim.setObjectPosition(trackpoint, start_world)  # pylint: disable=no-member
 
 worldmap = util.GridMap(sim, 5.0)
