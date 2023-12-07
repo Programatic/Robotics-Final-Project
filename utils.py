@@ -273,7 +273,7 @@ def execute_path(
             path_index = path_index + 1
 
 
-def initialize_algorithm(start: Position) -> tuple[PriorityQueue[Node], set[Node], int]:
+def initialize_algorithm(start: Position) -> tuple[PriorityQueue[Node], int]:
     """
     This function is used to initialize anything that is needed for all of our algorithms to run.
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
@@ -282,8 +282,10 @@ def initialize_algorithm(start: Position) -> tuple[PriorityQueue[Node], set[Node
     Returns: a tuple of the priority queue, the explored set, and the depth
     """
     queue: PriorityQueue[Node] = PriorityQueue()
-    queue.put(Node.worldmap_reference[start[0], start[1]])
-    return queue, set(), 0
+    node = Node.worldmap_reference[start[0], start[1]]
+    node.is_explored = True
+    queue.put(node)
+    return queue, 0
 
 
 def backtrack(node: Node, start: Position) -> list[Position]:
