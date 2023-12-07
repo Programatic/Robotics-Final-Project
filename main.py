@@ -44,11 +44,13 @@ algorithm = None
 heuristic_choice = None
 diagonal_neighbors = False
 depth_limit = 1000000
+frontier_size = 5
 try:
     algorithm = sys.argv[1]
     heuristic_choice = sys.argv[2]
-    diagonal_neighbors = bool(sys.argv[3])
+    diagonal_neighbors = sys.argv[3] == 'true' or sys.argv[3] == 'True'
     depth_limit = int(sys.argv[4])
+    frontier_size = int(sys.argv[5])
 except IndexError:
     print("Not all arguments so using some default values.")
     print(f'Depth limit = {depth_limit}')
@@ -63,10 +65,10 @@ match algorithm:
         search_func = search.a_star
         # search_func = search.greedy_first
     case 'beam':
-        search_func = search.beam  # type: ignore
+        search_func = search.beam
+        search.beam_frontier_size = frontier_size
+        print(search.beam_frontier_size)
         Node.cost_addition = 0
-    # case 'brushfire':
-        # search_func = search.brushfire
     case 'djikstra':
         search_func = search.djikstra
     case _:
