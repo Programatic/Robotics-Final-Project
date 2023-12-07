@@ -31,6 +31,7 @@ class Node:
         self.heuristic_distance = heuristic_distance
         self.parent_node: Optional['Node'] = None
         self.cost = 0
+        self.is_explored = False
 
     def __str__(self) -> str:
         """
@@ -86,7 +87,7 @@ class Node:
         """
         return self.pos
 
-    def get_neighbors(self, explored: set['Node']) -> list['Node']:
+    def get_neighbors(self) -> list['Node']:
         """
         return: a list of the neighbors of the node
         """
@@ -105,13 +106,14 @@ class Node:
         for node_none in node_with_none_list:
             if node_none:
 
-                if node_none in explored:
+                if node_none.is_explored:
                     continue
 
                 if not node_none.traversable():
                     continue
 
                 node_none.parent_node = self
+                node_none.is_explored = True
                 node_none.cost = self.cost_addition + self.cost
                 node_none.heuristic_distance += node_none.cost
                 node_list.append(node_none)

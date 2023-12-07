@@ -15,7 +15,7 @@ def a_star(start: Position, depth_limit: int = 50) -> list[Position]:
     Returns: a list of nodes that represents the path from the start node to the end node
     """
     # Initialize the priority queue, the explored set, and the depth
-    queue, explored, depth = util.initialize_algorithm(start)
+    queue, depth = util.initialize_algorithm(start)
 
     # While the queue is not empty and the depth limit is not reached
     while not queue.empty() and depth < depth_limit:
@@ -30,8 +30,7 @@ def a_star(start: Position, depth_limit: int = 50) -> list[Position]:
             return util.backtrack(current_node, start)
 
         # Add the neighbors that can be explored to the queue
-        for neighbor in current_node.get_neighbors(explored):
-            explored.add(neighbor)
+        for neighbor in current_node.get_neighbors():
             queue.put(neighbor)
 
     # Return an empty list if the path is not found
@@ -48,7 +47,7 @@ def beam(start: Position, k: int = 50, depth_limit: int = 50) -> list[Position]:
     Returns: a list of nodes that represents the path from the start node to the end node
     """
     # Initialize the frontier set and the depth
-    queue, explored, depth = util.initialize_algorithm(start)
+    queue, depth = util.initialize_algorithm(start)
     depth = 0
 
     frontier: list[Node] = [queue.get()]
@@ -66,8 +65,7 @@ def beam(start: Position, k: int = 50, depth_limit: int = 50) -> list[Position]:
                 return util.backtrack(node, start)
 
         for node in frontier:
-            for neighbor in node.get_neighbors(explored):
-                explored.add(neighbor)
+            for neighbor in node.get_neighbors():
                 queue.put(neighbor)
 
         frontier = []
