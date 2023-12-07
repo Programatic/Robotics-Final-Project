@@ -2,7 +2,7 @@
 
 # Algorithms:
 
-**1) A***
+**1) A\*
 This algorithm guarantees to find the shortest path if it exists. The algorithm uses a priority queue to sort the nodes by distance to the node + distance chosen by a heuristic to the goal.
 
 Runtime: O(d log b)
