@@ -3,6 +3,8 @@ The entrypoint for the project.
 """
 import sys
 from typing import Optional
+import tracemalloc
+import time
 
 from coppeliasim_zmqremoteapi_client import RemoteAPIClient  # type: ignore
 
@@ -94,8 +96,19 @@ assert Node.worldmap_reference is not None
 
 Node.diagonal_neighbors = diagonal_neighbors
 
+tracemalloc.start()
+start_time = time.perf_counter_ns()
+
 print("Starting Search")
 path = search_func(start, depth_limit)
+
+print(f"Time to Run (ms): {(time.perf_counter_ns() - start_time) / 10 ** 6}")
+
+snapshot = tracemalloc.take_snapshot()
+allocs = sum(stat.size for stat in snapshot.statistics('lineno'))
+
+_, peak = tracemalloc.get_traced_memory()
+print(f"Peak memory usage: {peak / 1024} KiB")
 
 if not path:
     print("No path found.")
