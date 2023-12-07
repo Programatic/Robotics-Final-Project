@@ -19,7 +19,7 @@ class Node:
     diagonal_neighbors: bool = False
     cost_addition: int = 1
 
-    def __init__(self, pos: Position, is_obstacle: bool, heuristic_distance: int):
+    def __init__(self, pos: Position, is_obstacle: bool, heuristic_distance: float):
         """
         :param pos: the (x, y) coordinates of the node
         :param destination: the (x, y) coordinates of the destination node
@@ -30,7 +30,7 @@ class Node:
         self.is_obstacle = is_obstacle
         self.heuristic_distance = heuristic_distance
         self.parent_node: Optional['Node'] = None
-        self.cost = 0
+        self.cost = 0.0
         self.is_explored = False
 
     def __str__(self) -> str:
@@ -79,7 +79,13 @@ class Node:
         if x > len(self.worldmap_reference) - 1 or y > len(self.worldmap_reference[0]) - 1:
             return None
 
-        return self.worldmap_reference[x, y] # type: ignore
+        neighbor: Node = self.worldmap_reference[x, y]
+        weight = 1.0
+        if abs(update[0]) + abs(update[1]) > 1:
+            weight = 2
+
+        neighbor.cost = self.cost_addition * weight + self.cost
+        return neighbor
 
     def get_coordinates(self) -> Position:
         """
@@ -114,7 +120,6 @@ class Node:
 
                 node_none.parent_node = self
                 node_none.is_explored = True
-                node_none.cost = self.cost_addition + self.cost
                 node_none.heuristic_distance += node_none.cost
                 node_list.append(node_none)
 

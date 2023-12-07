@@ -28,6 +28,7 @@ goal_world = sim.getObjectPosition(goal, sim.handle_world)  # pylint: disable=no
 robot = sim.getObjectHandle("/PioneerP3DX")  # pylint: disable=no-member
 start_world = sim.getObjectPosition(robot, sim.handle_world)  # pylint: disable=no-member
 
+# Move trackpoint to robot because sometimes it did not properly reset its position
 sim.setObjectPosition(trackpoint, start_world)  # pylint: disable=no-member
 
 worldmap = util.GridMap(sim, 5.0)
@@ -48,7 +49,7 @@ frontier_size = 5
 try:
     algorithm = sys.argv[1]
     heuristic_choice = sys.argv[2]
-    diagonal_neighbors = sys.argv[3] == 'true' or sys.argv[3] == 'True'
+    diagonal_neighbors = sys.argv[3] == 'True' or sys.argv[3] == 'true'
     depth_limit = int(sys.argv[4])
     frontier_size = int(sys.argv[5])
 except IndexError:
@@ -63,11 +64,9 @@ match algorithm:
     case 'greedy_first':
         Node.cost_addition = 0
         search_func = search.a_star
-        # search_func = search.greedy_first
     case 'beam':
         search_func = search.beam
         search.beam_frontier_size = frontier_size
-        print(search.beam_frontier_size)
         Node.cost_addition = 0
     case 'djikstra':
         search_func = search.djikstra
@@ -101,8 +100,9 @@ Node.diagonal_neighbors = diagonal_neighbors
 tracemalloc.start()
 start_time = time.perf_counter_ns()
 
-print("Starting Search")
+print("Starting search.")
 path = search_func(start, depth_limit)
+print("Search complete")
 
 print(f"Time to Run (ms): {(time.perf_counter_ns() - start_time) / 10 ** 6}")
 

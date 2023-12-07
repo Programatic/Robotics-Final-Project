@@ -120,7 +120,6 @@ def beam(start: Position, depth_limit: int = 50) -> list[Position]:
     """
     # Initialize the frontier set and the depth
     queue, depth = util.initialize_algorithm(start)
-    depth = 0
 
     frontier: list[Node] = [queue.get()]
 
