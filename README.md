@@ -14,6 +14,12 @@ Worked on several of the search algorithms and testing to make sure they work.
 # Introduction:
 There are a variety of different search algorithms as well as heuristics that have varying performance in time to compute, memory used to compute, and the optimality of the resulting path. In this project, we aim to explore different combinations of heurstics and search algorithms (where applicable) to compare the performance between them.
 
+```
+Start -> Camera -> Python -> 
+  Discretize the Grid -> Compute GridMap -> Run Search Algorithm -> Create Coppelia Sim Path ->
+    Have PioneerP3DX follow path
+```
+
 # Algorithms:
 
 **1) A\***
@@ -54,6 +60,13 @@ Space Complexity: O(b)
 
 
 # Results:
+
+There were several challenges in implementing the following algorithms. First, implementing diagonals on a discretized grid made 
+it much more difficult to actually compute the correct path. This was because the scaling to a discretized messed up the computations
+on diagonal vs non-diagonal path lengths. In order to fix this, we penalized diagonals further in order to prevent it from thinking 
+that diagonals would always be the optimal solution. This stopped the robot from taking non optimal paths that ultimately prioritized taking
+as many diagonals as possible. Furthermore, we also had issues with developing some of the search algorithms (notablly beam), that required
+bleeding state in the code that was going to add a lot of code complexity. 
 
 ## 1) Greedy:
 [Manhattan](https://youtu.be/X4M8PvoTzAQ)
@@ -114,3 +127,5 @@ gave a relatively optimal path. Given that there is a little bit of randomness i
 So, beam was very suprising in that less than k = 5, it would not be able to find a path. However, with a k = 5, then beam starts finding the optimal path
 with a relatively small memory usage and takes less time than A\*. This could prove to be a very good algorithm to use in a resource constrained environment.
  
+If we were to continue to improve this, we would like to expand into other more niche heuristics and search algorithms and make compare them in those niches.
+Furthermore, we would like to get more data from more maps to see how these algorithms respond in different scenarios and even try to find specific edge cases.
