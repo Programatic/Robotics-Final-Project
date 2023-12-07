@@ -1,4 +1,18 @@
 # Robotics-Final-Project
+## Ford Smith
+Worked on the utilities and integration with CoppeliaSim on the Python side. 
+
+## Michael Carlstrom
+Worked on Beam Search as well as the Node class and integrated them with the search algorithms.
+
+## Max Rollins
+Worked on the CoppeliaSim scene and code in order to drive the P3DX.
+
+## Ari Glockner
+Worked on several of the search algorithms and testing to make sure they work.
+
+# Introduction:
+There are a variety of different search algorithms as well as heuristics that have varying performance in time to compute, memory used to compute, and the optimality of the resulting path. In this project, we aim to explore different combinations of heurstics and search algorithms (where applicable) to compare the performance between them.
 
 # Algorithms:
 
@@ -60,6 +74,8 @@ Space Complexity: O(b)
 
 # Performance
 
+In the table below, we can see the results of the testing. It should be noted, that this is the average for a single map. Multiple maps were used for correctness, but there was not enough time to get metrics for the other maps.
+
 | Algorithm          	| Time (ms) 	| Memory Usage (KiB) 	| Path Length 	|
 |:--------------------|----------:	|-------------------:	|------------:	|
 | Greedy - Manhattan 	|      8.77 	|              35.02 	|         443 	|
@@ -75,3 +91,13 @@ Space Complexity: O(b)
 | A\* - Diagonals    	| 651.65    	| 893.56             	| 400.66      	|
 | Djikstra           	|    597.88 	|           14767.47 	|         407 	|
 | Beam               	|     88.70 	|             194.20 	|         406 	|
+
+# Conclusion
+
+There was a little bit of suprise in the results, mostly from beam search. Greedy understandably has the best time and memory usage, but it does not 
+give an optimal path length. However, interestingly, the Octile and Chebyshev performed better than we initially thought it would. For A\*, it understandably
+used much more memory and took a larger time to compute, but gave a much better path. Djikstra also took a drastically higher time and memory usage, but still
+gave a relatively optimal path. Given that there is a little bit of randomness in the start of the robot, this is likely due to a small chance of error to the optimal path.
+So, beam was very suprising in that less than k = 5, it would not be able to find a path. However, with a k = 5, then beam starts finding the optimal path
+with a relatively small memory usage and takes less time than A\*. This could prove to be a very good algorithm to use in a resource constrained environment.
+ 
