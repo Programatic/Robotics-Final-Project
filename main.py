@@ -29,7 +29,7 @@ start_world = sim.getObjectPosition(robot, sim.handle_world)  # pylint: disable=
 sim.setObjectPosition(trackpoint, start_world)  # pylint: disable=no-member
 
 worldmap = util.GridMap(sim, 5.0)
-worldmap.inflate_obstacles(num_iter=8)
+worldmap.inflate_obstacles(num_iter=7)
 worldmap.normalize_map()
 
 goal_grid = worldmap.get_grid_coords(goal_world)
@@ -67,7 +67,7 @@ match algorithm:
         # search_func = search.brushfire
     case 'djikstra':
         heuristic_func = heuristic.no_heuristic
-        search_func = search.a_star
+        search_func = search.djikstra # type: ignore
     case _:
         print("Using default search A*.")
         search_func = search.a_star
