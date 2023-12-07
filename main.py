@@ -3,6 +3,8 @@ The entrypoint for the project.
 """
 import sys
 from typing import Optional
+import tracemalloc
+import time
 
 from coppeliasim_zmqremoteapi_client import RemoteAPIClient  # type: ignore
 
@@ -29,7 +31,7 @@ start_world = sim.getObjectPosition(robot, sim.handle_world)  # pylint: disable=
 sim.setObjectPosition(trackpoint, start_world)  # pylint: disable=no-member
 
 worldmap = util.GridMap(sim, 5.0)
-worldmap.inflate_obstacles(num_iter=8)
+worldmap.inflate_obstacles(num_iter=7)
 worldmap.normalize_map()
 
 goal_grid = worldmap.get_grid_coords(goal_world)
@@ -65,8 +67,7 @@ match algorithm:
     # case 'brushfire':
         # search_func = search.brushfire
     case 'djikstra':
-        heuristic_func = heuristic.no_heuristic
-        search_func = search.a_star
+        search_func = search.djikstra
     case _:
         print("Using default search A*.")
         search_func = search.a_star
@@ -94,9 +95,20 @@ assert Node.worldmap_reference is not None
 
 Node.diagonal_neighbors = diagonal_neighbors
 
+tracemalloc.start()
+start_time = time.perf_counter_ns()
+
 print("Starting Search")
 path = search_func(start, depth_limit)
 print("search complete")
+
+print(f"Time to Run (ms): {(time.perf_counter_ns() - start_time) / 10 ** 6}")
+
+snapshot = tracemalloc.take_snapshot()
+allocs = sum(stat.size for stat in snapshot.statistics('lineno'))
+
+_, peak = tracemalloc.get_traced_memory()
+print(f"Peak memory usage: {peak / 1024} KiB")
 
 if not path:
     print("No path found.")
