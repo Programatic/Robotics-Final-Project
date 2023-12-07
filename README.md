@@ -60,17 +60,18 @@ Space Complexity: O(b)
 
 # Performance
 
-|          Algorithm 	| Time (ms) 	| Memory Usage (KiB) 	|
-|:-------------------	|----------:	|--------------------:|
-| Greedy - Manhattan 	|      8.77 	|              35.02 	|
-| Greedy - Euclidean 	|      8.99 	|              16.50 	|
-| Greedy - Chebyshev 	|     12.15 	|              39.41 	|
-| Greedy - Octile    	|      9.48 	|              18.38 	|
-| Greedy - Bozo      	|    467.63 	|              87.52 	|
-| A\* - Manhattan    	|    139.06 	|             355.35 	|
-| A\* - Euclidean    	|    325.76 	|             922.16 	|
-| A\* - Chebyshev    	|    313.34 	|             740.43 	|
-| A\* - Octile       	|    316.32 	|             869.81 	|
-| A\* - Bozo         	|    488.43 	|            1887.28 	|
-| Djikstra           	|    597.88 	|           14767.47 	|
-| Beam               	|     88.70 	|             194.20 	|
+| Algorithm          	| Time (ms) 	| Memory Usage (KiB) 	| Path Length 	|
+|:--------------------|----------:	|-------------------:	|------------:	|
+| Greedy - Manhattan 	|      8.77 	|              35.02 	|         443 	|
+| Greedy - Euclidean 	|      8.99 	|              16.50 	|         445 	|
+| Greedy - Chebyshev 	|     12.15 	|              39.41 	|         440 	|
+| Greedy - Octile    	|      9.48 	|              18.38 	|         440 	|
+| Greedy - Bozo      	|    467.63 	|              87.52 	|         920 	|
+| A\* - Manhattan    	|    139.06 	|             355.35 	|         406 	|
+| A\* - Euclidean    	|    325.76 	|             922.16 	|         406 	|
+| A\* - Chebyshev    	|    313.34 	|             740.43 	|         406 	|
+| A\* - Octile       	|    316.32 	|             869.81 	|         406 	|
+| A\* - Bozo         	|    488.43 	|            1887.28 	|         594 	|
+| A\* - Diagonals    	| 651.65    	| 893.56             	| 400.66      	|
+| Djikstra           	|    597.88 	|           14767.47 	|         407 	|
+| Beam               	|     88.70 	|             194.20 	|         406 	|
