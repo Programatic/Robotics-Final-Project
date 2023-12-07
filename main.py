@@ -47,7 +47,7 @@ depth_limit = 1000000
 try:
     algorithm = sys.argv[1]
     heuristic_choice = sys.argv[2]
-    diagonal_neighbors = bool(sys.argv[3])
+    diagonal_neighbors = sys.argv[3] == 'True' or sys.argv[3] == 'true'
     depth_limit = int(sys.argv[4])
 except IndexError:
     print("Not all arguments so using some default values.")
