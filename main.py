@@ -96,9 +96,9 @@ Node.diagonal_neighbors = diagonal_neighbors
 tracemalloc.start()
 start_time = time.perf_counter_ns()
 
-print("Starting Search")
+print("Starting search.")
 path = search_func(start, depth_limit)
-print("search complete")
+print("Search complete")
 
 print(f"Time to Run (ms): {(time.perf_counter_ns() - start_time) / 10 ** 6}")
 
