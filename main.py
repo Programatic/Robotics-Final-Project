@@ -59,7 +59,6 @@ match algorithm:
     case 'greedy_first':
         Node.cost_addition = 0
         search_func = search.a_star
-        # search_func = search.greedy_first
     case 'beam':
         search_func = search.beam  # type: ignore
         Node.cost_addition = 0
