@@ -30,7 +30,7 @@ class Node:
         self.is_obstacle = is_obstacle
         self.heuristic_distance = heuristic_distance
         self.parent_node: Optional['Node'] = None
-        self.cost = 0
+        self.cost = 0.0
         self.is_explored = False
 
     def __str__(self) -> str:
@@ -79,14 +79,13 @@ class Node:
         if x > len(self.worldmap_reference) - 1 or y > len(self.worldmap_reference[0]) - 1:
             return None
 
-        neighbor = self.worldmap_reference[x, y]
-        weight = 1
+        neighbor: Node = self.worldmap_reference[x, y]
+        weight = 1.0
         if abs(update[0]) + abs(update[1]) > 1:
             weight = 2 ** 0.5
 
         neighbor.cost = self.cost_addition * weight + self.cost
         return neighbor
-        # type: ignore
 
     def get_coordinates(self) -> Position:
         """
