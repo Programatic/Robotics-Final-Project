@@ -31,7 +31,6 @@ sim.setObjectPosition(trackpoint, start_world)  # pylint: disable=no-member
 worldmap = util.GridMap(sim, 5.0)
 worldmap.inflate_obstacles(num_iter=2)
 worldmap.normalize_map()
-worldmap.plot()
 
 goal_grid = worldmap.get_grid_coords(goal_world)
 start_grid = worldmap.get_grid_coords(start_world)

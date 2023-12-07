@@ -7,7 +7,9 @@ import heapq
 from node import Node, Position
 import utils as util
 
-def dijkstra(start: Position, iter=10000):
+
+def dijkstra(start: Position, iterations=10000):
+    """Dijkstra search algorithm."""
     graph = Node.worldmap_reference
     rows, cols = len(graph), len(graph[0])
 
@@ -19,7 +21,7 @@ def dijkstra(start: Position, iter=10000):
     priority_queue = [(0, Node.worldmap_reference[start[0], start[1]])]
 
     i = 0
-    while priority_queue and i < iter:
+    while priority_queue and i < iterations:
         i += 1
         current_distance, current_node = heapq.heappop(priority_queue)
 
@@ -39,7 +41,6 @@ def dijkstra(start: Position, iter=10000):
                     distances[(ni, nj)] = distance
                     predecessors[(ni, nj)] = current_node
                     heapq.heappush(priority_queue, (distance, neighbor))
-
 
     def get_shortest_path(predecessors, start, destination):
         path = []
