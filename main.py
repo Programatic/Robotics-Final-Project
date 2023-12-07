@@ -64,8 +64,6 @@ match algorithm:
     case 'beam':
         search_func = search.beam  # type: ignore
         Node.cost_addition = 0
-    # case 'brushfire':
-        # search_func = search.brushfire
     case 'djikstra':
         search_func = search.djikstra
     case _:

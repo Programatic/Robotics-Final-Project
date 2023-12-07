@@ -144,14 +144,3 @@ def beam(start: Position, k: int = 50, depth_limit: int = 50) -> list[Position]:
     # Return an empty list if the path is not found
     print(depth)
     return []
-
-
-# def brushfire(start: Position, depth_limit: int = 50) -> list[Position]:
-#     """
-#     :param heuristic: the heuristic function to use for calculating the distance between two nodes
-#     :param diagonal_neighbors: whether diagonal neighbors are allowed
-#     :param depth_limit: the depth limit of the search
-#     Returns: a list of nodes that represents the path from the start node to the end node
-#     """
-#     # TO DO: Implement this function
-#     return []
