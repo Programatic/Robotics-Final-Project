@@ -42,6 +42,19 @@ Space Complexity: O(b)
 
 # Heuristics: 
 
+- Manhattan - $\Delta x + \Delta y$
+
+- Euclidean - $\sqrt{(\Delta x)^2 + (\Delta y)^2}
+
+- Chebyshev - max{$\Delta x, \Delta y$}
+
+- Octile - $\Delta x + \Delta y + (\sqrt{2} - 2) *$ min{$\Delta x, \Delta y$}
+
+- Bozo - Random
+
+
+# Results:
+
 ## 1) Greedy:
 [Manhattan](https://youtu.be/X4M8PvoTzAQ)
 
