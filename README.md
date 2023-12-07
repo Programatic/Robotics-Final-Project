@@ -29,17 +29,29 @@ Space Complexity: O(b)
 # Heuristics: 
 All videos for the heuristics are shown using the Greedy algorithm
 
-**1) Greedy:
-https://youtu.be/X4M8PvoTzAQ
-https://youtu.be/D5H7L5vYMzI
-https://youtu.be/Cp9DrXKQI-w
-https://youtu.be/lyZvc4FDa54
+## 1) Greedy:
+[Manhattan](https://youtu.be/X4M8PvoTzAQ)
 
-**2) A*
-https://youtu.be/WIc21hOAth8
-https://youtu.be/3u1lxfqrvY4
-https://youtu.be/WCrXmY2Jtw4
-https://youtu.be/QiEmjwGPaGU
+[Euclidean](https://youtu.be/D5H7L5vYMzI)
 
-**3) Djikstra:
-https://youtu.be/LYqw2WOBfUY
+[Chebyshev](https://youtu.be/Cp9DrXKQI-w)
+
+[Octile](https://youtu.be/lyZvc4FDa54)
+
+[Bozo](https://youtu.be/Iguz9JbiYVQ)
+
+## 2) A\*
+[Manhattan](https://youtu.be/WIc21hOAth8)
+
+[Euclidean](https://youtu.be/3u1lxfqrvY4)
+
+[Chebyshev](https://youtu.be/WCrXmY2Jtw4)
+
+[Octile](https://youtu.be/QiEmjwGPaGU)
+
+[Bozo](https://youtu.be/biGdXdjMwMc)
+
+[Diagonal](https://youtu.be/IwjQEz6H3CE)
+
+## 3) Djikstra:
+[Djikstra](https://youtu.be/LYqw2WOBfUY)
