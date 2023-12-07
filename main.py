@@ -17,16 +17,22 @@ import utils as util
 client = RemoteAPIClient()
 sim = client.getObject("sim")
 
+
+trackpoint = sim.getObjectHandle("/track_point")  # pylint: disable=no-member
+
+goal = sim.getObjectHandle("/goal_point")  # pylint: disable=no-member
+goal_world = sim.getObjectPosition(goal, sim.handle_world)  # pylint: disable=no-member
+
+robot = sim.getObjectHandle("/PioneerP3DX")  # pylint: disable=no-member
+start_world = sim.getObjectPosition(robot, sim.handle_world)  # pylint: disable=no-member
+
+sim.setObjectPosition(trackpoint, start_world)  # pylint: disable=no-member
+
 worldmap = util.GridMap(sim, 5.0)
 worldmap.inflate_obstacles(num_iter=8)
 worldmap.normalize_map()
 
-goal = sim.getObjectHandle("/goal_point")  # pylint: disable=no-member
-goal_world = sim.getObjectPosition(goal, sim.handle_world)  # pylint: disable=no-member
 goal_grid = worldmap.get_grid_coords(goal_world)
-
-robot = sim.getObjectHandle("/PioneerP3DX")  # pylint: disable=no-member
-start_world = sim.getObjectPosition(robot, sim.handle_world)  # pylint: disable=no-member
 start_grid = worldmap.get_grid_coords(start_world)
 
 start = tuple(start_grid)[::-1]
@@ -35,7 +41,7 @@ Node.end_coordinate = tuple(goal_grid)[::-1]
 algorithm = None
 heuristic_choice = None
 diagonal_neighbors = False
-depth_limit = 10000
+depth_limit = 1000000
 try:
     algorithm = sys.argv[1]
     heuristic_choice = sys.argv[2]
@@ -55,7 +61,7 @@ match algorithm:
         search_func = search.a_star
         # search_func = search.greedy_first
     case 'beam':
-        search_func = search.beam # type: ignore
+        search_func = search.beam  # type: ignore
         Node.cost_addition = 0
     # case 'brushfire':
         # search_func = search.brushfire
@@ -99,5 +105,4 @@ if not path:
 trace_world = worldmap.get_world_coords(path)
 coppelia_path = util.generate_path_from_trace(sim, trace_world, 100)
 
-trackpoint = sim.getObjectHandle("/track_point")  # pylint: disable=no-member
 util.execute_path(coppelia_path, sim, trackpoint, robot, thresh=0.1)
