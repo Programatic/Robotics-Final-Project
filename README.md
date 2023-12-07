@@ -55,3 +55,6 @@ All videos for the heuristics are shown using the Greedy algorithm
 
 ## 3) Djikstra:
 [Djikstra](https://youtu.be/LYqw2WOBfUY)
+
+## 4) Bea:
+[Beam](https://youtu.be/MGI7nls11og)
