@@ -29,14 +29,14 @@ Space Complexity: O(b)
 # Heuristics: 
 All videos for the heuristics are shown using the Greedy algorithm
 
-**1) Manhattan:** Δx + Δy
+**1) Manhattan:** $Δx + Δy$
 https://youtu.be/X4M8PvoTzAQ
 
-**2) Euclidean:** sqrt(Δx^2 + Δy^2)
+**2) Euclidean:** $\sqrt{Δx^2 + Δy^2}$
 https://youtu.be/D5H7L5vYMzI
 
-**3) Chebyshev:** max(Δx, Δy)
+**3) Chebyshev:** max $(Δx, Δy)$
 https://youtu.be/Cp9DrXKQI-w
 
-**4) Octile:** Δx + Δy + (${2}^{0.5}$ - 2) * min(Δx, Δy)
+**4) Octile:** $Δx + Δy + (\sqrt{2} - 2) *$ min $(Δx, Δy)$
 https://youtu.be/lyZvc4FDa54
