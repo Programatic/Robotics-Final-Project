@@ -107,7 +107,10 @@ def a_star(start: Position, depth_limit: int = 50) -> list[Position]:
     return []
 
 
-def beam(start: Position, k: int = 50, depth_limit: int = 50) -> list[Position]:
+beam_frontier_size: int = 50
+
+
+def beam(start: Position, depth_limit: int = 50) -> list[Position]:
     """
     :param heuristic: the heuristic function to use for calculating the distance between two nodes
     :param k: the number of nodes to keep in the frontier
@@ -130,16 +133,19 @@ def beam(start: Position, k: int = 50, depth_limit: int = 50) -> list[Position]:
         for node in frontier:
             # If the current node is the goal node
             if node == Node.end_coordinate:
+                print("Found Goal.")
                 return util.backtrack(node, start)
 
         for node in frontier:
             for neighbor in node.get_neighbors():
                 queue.put(neighbor)
 
-        frontier = []
+        new_frontier = []
 
-        for _ in range(k):
-            frontier.append(queue.get())
+        for _ in range(min(beam_frontier_size, len(queue.queue))):
+            new_frontier.append(queue.get())
+
+        frontier = new_frontier.copy()
 
     # Return an empty list if the path is not found
     print(depth)
