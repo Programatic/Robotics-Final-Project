@@ -97,6 +97,7 @@ Node.diagonal_neighbors = diagonal_neighbors
 
 print("Starting Search")
 path = search_func(start, depth_limit)
+print("search complete")
 
 if not path:
     print("No path found.")
