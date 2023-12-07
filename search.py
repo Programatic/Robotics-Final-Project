@@ -2,26 +2,34 @@
 This file contains the search algorithms that are used to find the path from the start node to the end node
 """
 from queue import PriorityQueue
+from typing import Optional
 import heapq
 
 from node import Node, Position
 import utils as util
 
 
-def dijkstra(start: Position, iterations=10000):
-    """Dijkstra search algorithm."""
+# pylint: disable=too-many-locals
+def djikstra(start: Position, depth_limit: int = 10000) -> list[Position]:
+    '''
+    :param start: Start position to run djikstra with
+    :param iterations: Number of iterations to allow djikstra to run
+    Returns a list of Positions of the path if possible
+    '''
     graph = Node.worldmap_reference
     rows, cols = len(graph), len(graph[0])
 
     # Initialize distances and predecessors
-    distances = {(i, j): float('infinity') for i in range(rows) for j in range(cols)}
+    distances = {(i, j): float("infinity") for i in range(rows) for j in range(cols)}
     distances[start] = 0
-    predecessors = {(i, j): None for i in range(rows) for j in range(cols)}
+    predecessors: dict[Position, Optional[Node]] = {
+        (i, j): None for i in range(rows) for j in range(cols)
+    }
 
     priority_queue = [(0, Node.worldmap_reference[start[0], start[1]])]
 
     i = 0
-    while priority_queue and i < iterations:
+    while priority_queue and i < depth_limit:
         i += 1
         current_distance, current_node = heapq.heappop(priority_queue)
 
@@ -33,31 +41,35 @@ def dijkstra(start: Position, iterations=10000):
         for neighbor in neighbors:
             ni, nj = neighbor.pos[0], neighbor.pos[1]
 
-            # Check if the neighbor is within the bounds of the array
             if 0 <= ni < rows and 0 <= nj < cols:
-                distance = current_distance + 1  # Assuming each step has a cost of 1
+                distance = current_distance + 1
 
                 if distance < distances[(ni, nj)]:
                     distances[(ni, nj)] = distance
                     predecessors[(ni, nj)] = current_node
                     heapq.heappush(priority_queue, (distance, neighbor))
 
-    def get_shortest_path(predecessors, start, destination):
-        path = []
+    def get_shortest_path(
+        predecessors: dict[Position, Optional[Node]],
+        start: Position,
+        destination: Position,
+    ) -> list[Position]:
+        path: list[Position] = []
         current_node = destination
 
         if predecessors[current_node] is None:
-            return None
+            return []
 
         while current_node is not None:
             if isinstance(current_node, Node):
                 path.insert(0, (current_node.pos[0], current_node.pos[1]))
             else:
                 path.insert(0, current_node)
-            current_node = predecessors[current_node]
+
+            current_node = predecessors[current_node]  # type: ignore
 
         if path[0] != start:
-            return None
+            return []
 
         return path
 
